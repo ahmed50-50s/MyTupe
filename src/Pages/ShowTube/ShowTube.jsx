@@ -42,7 +42,7 @@ export default function ShowTube() {
     if (ChannelName) {
       GetData(ChannelName);
     }
-    console.log(ChannelName)
+    console.log(ChannelName);
   }, [ChannelName]);
 
   function goShowVideo(video) {
@@ -57,76 +57,72 @@ export default function ShowTube() {
 
   return (
     <>
-    <SideBar/>
-      <div className="w-5/6 float-right">
-      <div
-        className="w-full h-[40vh] bg-cover bg-center relative "
-        style={{
-          backgroundImage:
-            "url('/img/cover.webp')",
-        }}
-      >
+      <SideBar />
+      <div className="w-full md:w-4/5 md:ml-auto">
+        {/* Channel Banner */}
+        <div
+          className="w-full h-[30vh] sm:h-[40vh] bg-cover bg-center relative"
+          style={{
+            backgroundImage: "url('/img/cover.webp')",
+          }}
+        >
           <div className="absolute inset-0 bg-black opacity-30"></div>
 
-        <div className="absolute inset-0 top-70 flex flex-col items-center justify-center ">
-          <img
-            src={ChannelInfo?.thumbnail}
-            alt={ChannelInfo?.name}
-            className="w-40 h-40 rounded-full border-7 border-gray-800"
-          />
-          <div className="flex flex-col items-center mt-4">
-            <h2 className="text-white text-3xl font-bold flex items-center">
-              {ChannelInfo?.name}
-              {ChannelInfo?.verified && (
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  className="text-blue-500 text-lg ml-2"
-                />
-              )}
-            </h2>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <img
+              src={ChannelInfo?.thumbnail}
+              alt={ChannelInfo?.name}
+              className="w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 rounded-full border-4 sm:border-7 border-gray-800"
+            />
+            <div className="flex flex-col items-center mt-4">
+              <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold flex items-center">
+                {ChannelInfo?.name}
+                {ChannelInfo?.verified && (
+                  <FontAwesomeIcon
+                    icon={faCheckCircle}
+                    className="text-blue-500 text-sm sm:text-lg ml-2"
+                  />
+                )}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Video List */}
+        <div className="bg-[#0f0f0f] min-h-screen p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+            {Array.isArray(DataList) && DataList.length > 0 ? (
+              DataList.map((video, index) => (
+                <div
+                  key={index}
+                  className="transition-transform duration-300 transform hover:scale-105 p-2 rounded-xl cursor-pointer"
+                  onMouseEnter={() => setHoverIndex(index)}
+                  onMouseLeave={() => setHoverIndex(null)}
+                  onClick={() => goShowVideo(video)}
+                >
+                  <img
+                    src={
+                      HoverIndex === index
+                        ? video.thumbnail.rich || video.thumbnail.static
+                        : video.thumbnail.static
+                    }
+                    alt={video.title}
+                    className="rounded-xl w-full object-cover"
+                  />
+                  <h3 className="text-white mt-2 text-sm sm:text-base font-semibold">
+                    {video.title}
+                  </h3>
+                  <p className="text-zinc-400 text-xs sm:text-sm">
+                    {views(Number(video.views))} views • {video.published_date}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <span className="loader"></span>
+            )}
           </div>
         </div>
       </div>
-      <div className="bg-gray-900"></div>
-
-      <div className="bg-[#0f0f0f] min-h-screen p-4">
-        <div className="flex flex-wrap justify-around p-4 mt-20">
-          {Array.isArray(DataList) && DataList.length > 0 ? (
-            DataList.map((video, index) => (
-              <div
-                key={index}
-                className="w-1/3 transition-transform duration-300 transform hover:scale-105 p-2 rounded-xl"
-                onMouseEnter={() => setHoverIndex(index)}
-                onMouseLeave={() => setHoverIndex(null)}
-              >
-                <img
-                  onClick={() => goShowVideo(video)}
-                  src={
-                    HoverIndex === index
-                      ? video.thumbnail.rich || video.thumbnail.static
-                      : video.thumbnail.static
-                  }
-                  alt={video.title}
-                  className="rounded-xl w-full cursor-pointer"
-                />
-                <h3
-                  onClick={() => goShowVideo(video)}
-                  className="text-white mt-2 cursor-pointer"
-                >
-                  {video.title}
-                </h3>
-                <p className="text-zinc-400 text-sm">
-                  {views(Number(video.views))} views • {video.published_date}
-                </p>
-              </div>
-            ))
-          ) : (
-            <span className="loader"></span>
-          )}
-        </div>
-      </div>
-      </div>
-     
     </>
   );
 }

@@ -4,7 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 
 export default defineConfig({
-  base: "/MyTupe/",
   plugins: [
     tailwindcss(),
     react()],
