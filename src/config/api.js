@@ -1,7 +1,7 @@
 // API configuration for development and production
 const API_BASE_URL = import.meta.env.DEV
   ? "/api" // Use proxy in development
-  : "https://serpapi.com"; // Use direct URL in production
+  : "https://api.codetabs.com/v1/proxy/?quest=https://serpapi.com"; // Use direct URL in production
 
 const API_KEY =
   import.meta.env.VITE_SERPAPI_KEY ||
