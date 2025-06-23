@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { SearchContext } from "../../context/SearchContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar/SideBar";
+import { getSearchUrl, makeApiCall } from "../../config/api";
 
 export default function SearchMovies() {
   let { DataList, SearchTerm, setDataList } = useContext(SearchContext);
@@ -12,12 +12,11 @@ export default function SearchMovies() {
   async function GetData(x) {
     setLoading(true);
     try {
-      let response = await axios.get(
-        `/api/search.json?engine=youtube&search_query=${x}&api_key=963db332d651c2c25dfa85a450f22fb1c92fd64dff10253de07e5e382a6b0587`
-      );
-      setDataList(response.data.video_results);
+      const data = await makeApiCall(getSearchUrl(x));
+      setDataList(data.video_results);
     } catch (error) {
       console.error("❌ Error fetching data:", error);
+      setDataList([]);
     }
     setLoading(false);
   }
@@ -59,14 +58,18 @@ export default function SearchMovies() {
               />
 
               <div className="flex flex-col flex-1 text-center sm:text-left">
-                <h3 className="text-lg sm:text-xl font-bold mb-2 line-clamp-2">{video.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 line-clamp-2">
+                  {video.title}
+                </h3>
 
                 {/* ✅ جعل صورة القناة أصغر في الشاشات الصغيرة */}
                 <div
                   className="flex items-center gap-3 mb-2 justify-center sm:justify-start cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/ShowTube", { state: { ChannelName: video.channel.name } });
+                    navigate("/ShowTube", {
+                      state: { ChannelName: video.channel.name },
+                    });
                   }}
                 >
                   <img

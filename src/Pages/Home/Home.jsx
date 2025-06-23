@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import SideBar from "../../components/SideBar/SideBar";
 import { SearchContext } from "../../context/SearchContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getSearchUrl, makeApiCall } from "../../config/api";
 
 export default function Home() {
   const [HoverIndex, setHoverIndex] = useState(null);
@@ -27,11 +27,14 @@ export default function Home() {
   async function GetData(search) {
     setIsLoading(true);
 
-    let response = await axios.get(
-      `/api/search.json?engine=youtube&search_query=${search}&api_key=963db332d651c2c25dfa85a450f22fb1c92fd64dff10253de07e5e382a6b0587`
-    );
+    try {
+      const data = await makeApiCall(getSearchUrl(search));
+      setDataList(data.video_results);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setDataList([]);
+    }
 
-    setDataList(response.data.video_results);
     setIsLoading(false);
   }
 
@@ -81,21 +84,34 @@ export default function Home() {
                     alt={movie.channel.name}
                     className="w-10 h-10 rounded-full mr-3"
                     onClick={() => {
-                      navigate("/ShowTube", { state: { ChannelName: movie.channel.name } });
+                      navigate("/ShowTube", {
+                        state: { ChannelName: movie.channel.name },
+                      });
                     }}
                   />
                   <div>
-                    <h3 onClick={() => goShowVideo(movie)} className="text-white font-medium text-base">
+                    <h3
+                      onClick={() => goShowVideo(movie)}
+                      className="text-white font-medium text-base"
+                    >
                       {movie.title}
                     </h3>
                     <p
-                      onClick={() => navigate("/ShowTube", { state: { ChannelName: movie.channel.name } })}
+                      onClick={() =>
+                        navigate("/ShowTube", {
+                          state: { ChannelName: movie.channel.name },
+                        })
+                      }
                       className="text-zinc-400 text-sm hover:text-zinc-100"
                     >
                       {movie.channel.name}
                     </p>
-                    <p onClick={() => goShowVideo(movie)} className="text-zinc-400 text-sm">
-                      {views(Number(movie.views))} views • {movie.published_date}
+                    <p
+                      onClick={() => goShowVideo(movie)}
+                      className="text-zinc-400 text-sm"
+                    >
+                      {views(Number(movie.views))} views •{" "}
+                      {movie.published_date}
                     </p>
                   </div>
                 </div>

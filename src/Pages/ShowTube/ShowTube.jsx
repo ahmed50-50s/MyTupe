@@ -1,9 +1,9 @@
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar/SideBar";
+import { getSearchUrl, makeApiCall } from "../../config/api";
 
 export default function ShowTube() {
   const [DataList, setDataList] = useState([]);
@@ -16,12 +16,10 @@ export default function ShowTube() {
 
   async function GetData(ChannelName) {
     try {
-      const response = await axios.get(
-        `/api/search.json?engine=youtube&search_query=${ChannelName}&api_key=963db332d651c2c25dfa85a450f22fb1c92fd64dff10253de07e5e382a6b0587`
-      );
+      const data = await makeApiCall(getSearchUrl(ChannelName));
 
-      setDataList(response.data.video_results);
-      const firstVideo = response.data.video_results[0];
+      setDataList(data.video_results);
+      const firstVideo = data.video_results[0];
       if (firstVideo) {
         setChannelInfo({
           name: firstVideo.channel.name,
@@ -31,6 +29,7 @@ export default function ShowTube() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      setDataList([]);
     }
   }
 
